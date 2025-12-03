@@ -1,0 +1,20 @@
+{
+  "prettier.disableLanguages": ["markdown"],
+  "coc.preferences.formatOnSaveFiletypes": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "yaml",
+    "yml",
+    "markdown",
+    "rust",
+    "go"
+  ],
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "go.goplsOptions": {
+    "completeUnimported": true
+  }
+}
+
