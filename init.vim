@@ -51,6 +51,10 @@ Plug 'ryanoasis/vim-devicons'
 " Themes
 Plug 'morhetz/gruvbox'
 
+" Комментарии
+"Plug 'preservim/nerdcommenter'
+Plug 'jbgutierrez/vim-better-comments'
+
 " Файловое дерево и поиск
 Plug 'preservim/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -116,6 +120,11 @@ augroup END
 " ---------- ОБЩИЕ KEYMAPS ----------
 " Выход из insert по jk
 inoremap jk <Esc>
+
+" Сохранять файл по Ctrl+S
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>i
+vnoremap <C-s> <Esc>:w<CR>gv
 
 " Ctrl+b — дерево файлов (NERDTree)
 nnoremap <C-b> :NERDTreeToggle<CR>
@@ -200,6 +209,19 @@ let g:NERDTreeShowHidden=1
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
+" ---------- Поиск: Ctrl+f, f, p ----------
+" Открыть поиск: Ctrl+f (как /)
+nnoremap <C-f> /
+vnoremap <C-f> /
+
+" Следующее совпадение: f
+nnoremap f n
+vnoremap f n
+
+" Предыдущее совпадение: p
+nnoremap p N
+vnoremap p N
+
 " ---------- COC (LSP, автодополнение и т.п.) ----------
 " completion
 inoremap <silent><expr> <TAB>   pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -223,27 +245,19 @@ nmap <leader>e :CocDiagnostics<CR>
 " форматирование по сохранению
 autocmd BufWritePre *.rs,*.go,*.ts,*.tsx,*.js,*.jsx,*.json,*.yml,*.yaml,*.md :silent! call CocAction('format')
 
-" ---------- BETTER COMMENTS ----------
-highlight BetterCommentBlue   guifg=#3498DB ctermfg=75
-highlight BetterCommentPink   guifg=#FF5FAC ctermfg=205
-highlight BetterCommentRed    guifg=#FF2D00 ctermfg=196
-highlight BetterCommentOrange guifg=#FF8C00 ctermfg=208
-highlight BetterCommentGreen  guifg=#98C379 ctermfg=114
-highlight BetterCommentGrey   guifg=#474747 ctermfg=240
+" ---------- vim-better-comments: цвета ----------
+hi ErrorBetterComments      guifg=#FF2D00 ctermfg=196
+hi TodoBetterComments       guifg=#FF8C00 ctermfg=208
+hi QuestionBetterComments   guifg=#FF5FAC ctermfg=205
+hi HighlightBetterComments  guifg=#3498DB ctermfg=75
+hi StrikeoutBetterComments  guifg=#474747 ctermfg=240 gui=strikethrough cterm=strikethrough
 
-function! SetupBetterComments() abort
-  syntax match BetterCommentBlue   "\v//\s*@.*$"       containedin=Comment
-  syntax match BetterCommentPink   "\v//\s*[?].*$"     containedin=Comment
-  syntax match BetterCommentRed    "\v//\s*!.*$"       containedin=Comment
-  syntax match BetterCommentOrange "\v//\s*TODO.*$"    containedin=Comment
-  syntax match BetterCommentGreen  "\v//\s*[*].*$"     containedin=Comment
-  syntax match BetterCommentGrey   "\v//\s*[^@?!*].*$" containedin=Comment
-endfunction
-
-augroup BetterCommentsGroup
-  autocmd!
-  autocmd FileType javascript,typescript,typescriptreact,go,rust,c,cpp call SetupBetterComments()
-augroup END
+" ---------- vim-better-comments: языковые алиасы ----------
+let g:bettercomments_language_aliases = {
+\ 'javascript': 'js',
+\ 'typescript': 'ts',
+\ 'typescriptreact': 'tsx'
+\}
 
 " ---------- ПРОЧЕЕ ----------
 " Быстрее перемещаться по wrapped-строкам
