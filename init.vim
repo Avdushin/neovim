@@ -1,3 +1,4 @@
+
 " ---------- БАЗОВЫЕ НАСТРОЙКИ ----------
 set nocompatible
 filetype plugin indent on
@@ -52,8 +53,14 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'morhetz/gruvbox'
 
 " Комментарии
-"Plug 'preservim/nerdcommenter'
 Plug 'jbgutierrez/vim-better-comments'
+
+" Сниппеты для coc
+"Plug 'neoclide/coc-snippets'   " движок сниппетов для coc
+"Plug 'honza/vim-snippets'      " готовые сниппеты для JS/TS/Go/Rust и др.
+
+" Сниппеты
+Plug 'honza/vim-snippets'      " готовые сниппеты для JS/TS/Go/Rust и др.
 
 " Файловое дерево и поиск
 Plug 'preservim/nerdtree'
@@ -227,8 +234,18 @@ vnoremap p N
 inoremap <silent><expr> <TAB>   pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
-inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
+"inoremap <expr> <Down> pumvisible() ? "\<C-n>" : "\<Down>"
+"inoremap <expr> <Up>   pumvisible() ? "\<C-p>" : "\<Up>"
+
+" Стрелки тоже двигают список подсказок coc.nvim
+inoremap <silent><expr> <Down> coc#pum#visible()
+      \ ? coc#pum#next(1)
+      \ : "\<Down>"
+
+inoremap <silent><expr> <Up> coc#pum#visible()
+      \ ? coc#pum#prev(1)
+      \ : "\<Up>"
+
 
 " goto / refs / etc
 nmap <silent> gd <Plug>(coc-definition)
@@ -244,6 +261,45 @@ nmap <leader>e :CocDiagnostics<CR>
 
 " форматирование по сохранению
 autocmd BufWritePre *.rs,*.go,*.ts,*.tsx,*.js,*.jsx,*.json,*.yml,*.yaml,*.md :silent! call CocAction('format')
+
+
+" --------- COC: сниппеты и <C-j>/<Tab> ----------
+function! s:CocExpandOrCj() abort
+  " Если открыт popup-меню completion — перейти к следующему варианту
+  if coc#pum#visible()
+    return coc#pum#next(1)
+  endif
+
+  " Если есть что развернуть / есть следующий placeholder в сниппете
+  if coc#expandable() || coc#jumpable()
+    return "\<Plug>(coc-snippets-expand-jump)"
+  endif
+
+  " Обычный Ctrl+j
+  return "\<C-j>"
+endfunction
+
+inoremap <silent><expr> <C-j> <SID>CocExpandOrCj()
+
+" Tab: сначала двигаемся по popup меню,
+" потом пробуем развернуть сниппет, иначе обычный Tab
+function! s:CocTabOrSnip() abort
+  if coc#pum#visible()
+    return coc#pum#next(1)
+  endif
+  if coc#expandable() || coc#jumpable()
+    return "\<Plug>(coc-snippets-expand-jump)"
+  endif
+  return "\<Tab>"
+endfunction
+
+inoremap <silent><expr> <Tab> <SID>CocTabOrSnip()
+
+" Enter: если открыт список coc — подтвердить выбор,
+" иначе обычный Enter + триггеры coc#on_enter()
+inoremap <silent><expr> <CR> coc#pum#visible()
+      \ ? coc#pum#confirm()
+      \ : "\<C-g>u\<CR>\<C-r>=coc#on_enter()\<CR>"
 
 " ---------- vim-better-comments: цвета ----------
 hi ErrorBetterComments      guifg=#FF2D00 ctermfg=196

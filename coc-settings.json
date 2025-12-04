@@ -12,9 +12,19 @@
     "rust",
     "go"
   ],
-  "rust-analyzer.checkOnSave.command": "clippy",
-  "go.goplsOptions": {
-    "completeUnimported": true
-  }
-}
 
+  "rust-analyzer.server.path": "/home/user/.local/bin/rust-analyzer",
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "rust-analyzer.inlayHints.enable": true,
+
+  "go.goplsOptions": {
+    "completeUnimported": true,
+    "usePlaceholders": true
+  },
+
+  "suggest.enablePreview": true,
+  "suggest.floatEnable": true,
+  "suggest.detailField": "menu",
+
+  "snippets.ultisnips.pythonPrompt": false
+}
